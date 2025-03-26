@@ -10,6 +10,8 @@ jobs:
         container: cuaesd/aesd-autotest:24-assignment7-buildroot
         runs-on: self-hosted
         timeout-minutes: 120
+        env:
+          FORCE_UNSAFE_CONFIGURE: 1
         steps:
           - uses: actions/checkout@v2
           - name: Checkout submodules
@@ -19,7 +21,6 @@ jobs:
                 ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           - name: Run full test
             env:
-              FORCE_UNSAFE_CONFIGURE: 1
               GIT_SSH_COMMAND: "ssh -o StrictHostKeyChecking=no"
             run: ./full-test.sh
           - name: Cleanup
