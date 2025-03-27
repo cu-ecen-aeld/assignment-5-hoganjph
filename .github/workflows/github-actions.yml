@@ -25,7 +25,9 @@ jobs:
             env:
               GIT_SSH_COMMAND: "ssh -o StrictHostKeyChecking=no"
               BR2_DL_DIR: ${{ github.workspace }}/buildroot-dl
-            run: su builduser -c "./full-test.sh"
+              SSH_AUTH_SOCK: $SSH_AUTH_SOCK
+            run: |
+              sudo -u builduser -E bash -c './full-test.sh'
           - name: Cleanup
             if: always()
             run: |
