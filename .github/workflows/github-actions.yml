@@ -10,6 +10,9 @@ jobs:
         container: cuaesd/aesd-autotest:24-assignment7-buildroot
         runs-on: self-hosted
         timeout-minutes: 120
+        env:
+          BR2_DL_DIR: ${{ github.workspace }}/.buildroot-dl
+          GIT_SSH_COMMAND: "ssh -o StrictHostKeyChecking=no"
         steps:
           - uses: actions/checkout@v2
           - name: Checkout submodules
@@ -17,14 +20,13 @@ jobs:
           - name: Create non-root user
             run: |
               useradd -m builduser
+              mkdir -p ${{ github.workspace }}/.buildroot-dl
               chown -R builduser:builduser $GITHUB_WORKSPACE
           - uses: webfactory/ssh-agent@v0.5.3
             with:
                 ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           - name: Run full test as a non-root user
             env:
-              GIT_SSH_COMMAND: "ssh -o StrictHostKeyChecking=no"
-              BR2_DL_DIR: ${{ github.workspace }}/buildroot-dl
               SSH_AUTH_SOCK: $SSH_AUTH_SOCK
             run: |
               sudo -u builduser -E bash -c './full-test.sh'
